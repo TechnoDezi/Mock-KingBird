@@ -1,6 +1,9 @@
 # Mock-KingBird
 Proxy and record Json API's. Playback recorded data offline. Mock or Stub new Api endpoints with test data.
 
+**Download latest release**
+[https://github.com/TechnoDezi/Mock-KingBird/releases](https://github.com/TechnoDezi/Mock-KingBird/releases "Download latest release")
+
 **Mock-KingBird** is a first of its kind api mocking tool that supports a graphical UI.
 
 With this tool you can create endpoints easily using only json and an idea of how the data should look. The tool can also proxy existing API calls and record the responses in order to create a baseline for you to work from and playback the recorded data while testing.
