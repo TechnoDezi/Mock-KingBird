@@ -1,0 +1,53 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function DetailsMenuViewModel() {
+            var self = this;
+
+            //Properties
+            
+
+            //Functions
+            self.init = function () {
+                
+            }
+
+            //Events
+            self.HomeClick = function (project, event) {
+                App.NavigateHome();
+            }
+            self.ManageEndpointsClick = function (project, event) {
+                App.PageManager.LoadPage('project_endpoints')
+            }
+            self.StartProxyRecClick = function (project, event) {
+                App.PageManager.LoadPage('project_record')
+            }
+            self.StartProxyPlayClick = function (project, event) {
+                App.PageManager.LoadPage('project_play')
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        ko.applyBindings(new DetailsMenuViewModel(), document.getElementById("detailsMenu"));
+    });
+</script>
+<div id="detailsMenu">
+<ul class="nav sidebar-nav nav-pills nav-stacked">
+    <li>
+        <a href="#" data-bind="click:HomeClick"><span class="fa fa-home fa-fw"></span> Home</a>
+    </li>
+    <li class="subHeading">
+        Project Options
+    </li>
+    <li>
+        <a href="#" data-bind="click:ManageEndpointsClick"><span class="fa fa-photo fa-fw"></span> Manage Endpoints</a>
+    </li>
+    <li>
+        <a href="#" data-bind="click:StartProxyRecClick"><span class="fa fa-dot-circle-o fa-fw"></span> Start Proxy Recording</a>
+    </li>
+    <li>
+        <a href="#" data-bind="click:StartProxyPlayClick"><span class="fa fa-play fa-fw"></span> Start Proxy Playback</a>
+    </li>
+</ul>
+</div>

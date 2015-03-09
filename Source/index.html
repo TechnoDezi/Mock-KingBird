@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mock-KingBird</title>
+
+    <!-- Bootstrap -->
+    <link href="content/bootstrap.min.css" rel="stylesheet" />
+    <link href="content/bootstrap-theme.css" rel="stylesheet" />
+    <link href="content/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="content/simple-sidebar.css" rel="stylesheet" />
+    <link href="content/Lightbox/lightbox.css" rel="stylesheet" />
+    <link href="content/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div id="shell" class="navbar navbar-default navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-menu" data-bind="click: MenuClick">
+                <img src="content/images/icons/menu.png" width="22px" height="22px" />
+            </div>
+            <div class="navbar-header">
+                <div class="navbar-brand">
+                    <img alt="Brand" src="content/images/Icons/MockKingBird_Small.png" width="22px" height="22px"><span data-bind="text: AppName"></span>&nbsp;<span data-bind="text: AppVersion"></span>
+                </div>
+            </div>
+            <div class="login-right">
+                <ul class="login-right">
+                    <li data-bind="visible: RegisterVisible">
+                        
+                    </li>
+                    <li data-bind="visible: LoginVisible">
+                        
+                    </li>
+                    <li data-bind="visible: LogoutVisible">
+                        
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            <div id="menuHolder"></div>
+        </div>
+        <div id="page-content-wrapper">
+            <div id="breadcrumbs">
+                <ol class="breadcrumb" data-bind="foreach: breadcrumbs">
+                    <li><a href="#" data-bind="click: $parent.CrumbClick, text: title"></a></li>
+                </ol>
+            </div>
+            <div id="bodyContent" class="container-fluid body-content">
+                <div id="pageHolder"></div>
+            </div>
+        </div>
+    </div>
+    <footer class="navbar-fixed-bottom" data-spy="affix" data-offset-bottom="0" id="footer">
+        <div class="row">
+            <div class="container-fluid text-right">
+                <div class="footer-right">
+                    <p>&copy; 2015 <a href="#" data-bind="click: KooBooLinkClick">KooBoo Business</a></p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!--Script Files-->
+    <script src="scripts/jquery-2.1.3.min.js"></script>
+    <script src="scripts/bootstrap.modal.js"></script>
+    <script src="scripts/bootbox.min.js"></script>
+    <script src="scripts/knockout-3.2.0.js"></script>
+    <script src="scripts/KnockoutBindings.js"></script>
+
+    <script src="scripts/app/app.js"></script>
+    <script src="scripts/app/Constants.js"></script>
+    <script src="scripts/app/Authentication.js"></script>
+    <script src="scripts/app/PageManager.js"></script>
+    <script src="scripts/app/Projects.js"></script>
+    <script src="scripts/app/ProjectEndpoints.js"></script>
+    <script src="scripts/app/index.js"></script>
+    <script src="scripts/app/ProxyHandler.js"></script>
+</body>
+</html>

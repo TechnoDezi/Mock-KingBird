@@ -1,0 +1,53 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function MenuViewModel() {
+            var self = this;
+
+            //Properties
+            self.allProjects = ko.observableArray([]);
+
+            //Functions
+            self.init = function () {
+                App.Projects.FindAllDesc().then(function (projects) {
+                    $(projects).each(function (index, project) {
+                        self.allProjects.push(project);
+                    });
+                });
+            }
+
+            //Events
+            self.ProjClick = function (project, event) {
+                App.Variables.ActiveProjectID = project._id;
+                App.PageManager.LoadPage("project_details");
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        App.Variables.activePageViewModel = new MenuViewModel();
+        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("projectsList"));
+    });
+</script>
+<div id="projectsList">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Project Name</th>
+                        <th>Create Date</th>
+                        <th>Target Url</th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: allProjects">
+                    <tr class="cursor-pointer" data-bind="click: $parent.ProjClick">
+                        <td data-bind="text:projectName"></td>
+                        <td data-bind="dateFromNow: dateAdded"></td>
+                        <td data-bind="text:targetUrl"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

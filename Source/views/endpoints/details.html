@@ -1,0 +1,327 @@
+﻿<link href="node_modules/jsoneditor/jsoneditor.css" rel="stylesheet" />
+<script src="node_modules/jsoneditor/jsoneditor.min.js"></script>
+<script src="node_modules/jsoneditor/asset/ace/ace.js"></script>
+
+<script type="text/javascript">
+    $(function () {
+        function EndpointsViewModel() {
+            var self = this;
+            var editor = {};
+            var selectedEditorID = "";
+
+            //Properties
+            self.id = ko.observable();
+            self.projectID = ko.observable();
+            self.url = ko.observable();
+            self.method = ko.observable();
+            self.reqHeaders = ko.observable();
+            self.reqData = ko.observable();
+            self.respHeaders = ko.observable();
+            self.respData = ko.observable();
+            self.isLocked = ko.observable(true);
+            self.deleteVisible = ko.observable(true);
+            self.submitText = ko.observable("Update");
+
+            //Functions
+            self.init = function () {
+                self.AttachEventHandlers();
+                self.SetupJsonEditor();
+            }
+            self.AttachEventHandlers = function()
+            {
+                $('#reqHeaders').on('paste', function (e) { //Attach paste event handler for all inputs
+                    var obj = $(this);
+                    setTimeout(function () {
+                        try{
+                        
+                            var raw = obj.val();
+                            var clean = self.CleanText(raw);
+                            var jsonData = JSON.parse(clean);
+                            self.reqHeaders(JSON.stringify(jsonData));
+                        }
+                        catch(ex)
+                        {
+                            bootbox.alert("An error occurred: " + ex.message, function () { });
+                        }
+                    }, 500);
+                });
+                $('#reqData').on('paste', function (e) { //Attach paste event handler for all inputs
+                    var obj = $(this);
+                    setTimeout(function () {
+                        try {
+                            var raw = obj.val();
+                            var clean = self.CleanText(raw);
+                            var jsonData = JSON.parse(clean);
+                            self.reqData(JSON.stringify(jsonData));
+                        }
+                        catch (ex)
+                        {
+                            bootbox.alert("An error occurred: " + ex.message, function () { });
+                        }
+                    }, 500);
+                });
+                $('#respHeaders').on('paste', function (e) { //Attach paste event handler for all inputs
+                    var obj = $(this);
+                    setTimeout(function () {
+                        try{
+                            var raw = obj.val();
+                            var clean = self.CleanText(raw);
+                            var jsonData = JSON.parse(clean);
+                            self.respHeaders(JSON.stringify(jsonData));
+                        }
+                        catch(ex)
+                        {
+                            bootbox.alert("An error occurred: " + ex.message, function () { });
+                        }
+                    }, 500);
+                });
+                $('#respData').on('paste', function (e) { //Attach paste event handler for all inputs
+                    var obj = $(this);
+                    setTimeout(function () {
+                        try{
+                            var raw = obj.val();
+                            var clean = self.CleanText(raw);
+                            var jsonData = JSON.parse(clean);
+                            self.respData(JSON.stringify(jsonData));
+                        }
+                        catch(ex)
+                        {
+                            bootbox.alert("An error occurred: " + ex.message, function () { });
+                        }
+                    }, 500);
+                });
+                $(".jsonInput").on("click", function () {
+                    $(this).select();
+                });
+            }
+            self.CleanText = function (text) {
+                var clean = text.replace("\r\n", "").replace("\r", "").replace("\n", "").replace(" ", "");
+                return clean;
+            }
+            self.SetupJsonEditor = function () {
+                var container = document.getElementById('jsoneditor');
+
+                var options = {
+                    mode: 'code',
+                    modes: ['code', 'text', 'tree'], // allowed modes
+                    error: function (err) {
+                        alert(err.toString());
+                    }
+                };
+
+                var json = {
+                    "string": "Your string here"
+                };
+
+                editor = new JSONEditor(container, options, json);
+            }
+            self.SetJsonEditorData = function (JsonData) {
+                editor.set(JsonData);
+            }
+            self.GetJsonEditorData = function () {
+                try
+                {
+                    return editor.get();
+                }
+                catch(ex)
+                {
+                    bootbox.alert("An error occurred: " + ex.message, function () { });
+                }
+
+                return "{}";
+            }
+
+            //Events
+            self.cancelClick = function (data, event) {
+                self.LoadEndpoint("");
+            }
+            self.deleteClick = function (data, event) {
+                bootbox.confirm("Are you sure you want to delete the endpoint " + self.url() + " ?", function (result) {
+                    if (result) {
+                        App.ProjectEndpoints.Delete(self.id()).then(function (complete) {
+                            if (complete) {
+                                App.PageManager.LoadPage('project_endpoints');
+                            }
+                        });
+                    }
+                });
+            }
+            self.FormSubmit = function () {
+                App.ProjectEndpoints.InsertUpdate(
+                    self.id(),
+                    self.projectID(),
+                    self.url(),
+                    self.method(),
+                    JSON.parse(self.reqHeaders()),
+                    JSON.parse(self.reqData()),
+                    JSON.parse(self.respHeaders()),
+                    JSON.parse(self.respData()),
+                    self.isLocked()
+                ).then(function (id) {
+                    if (id != "" && id != null) {
+                        App.PageManager.LoadPage('project_endpoints');
+                    }
+                });
+            }
+            self.LoadEndpoint = function(endpointID)
+            {
+                if(endpointID != "")
+                {
+                    $("#endpointsView").show();
+                    $("#selectEndpoint").hide();
+
+                    App.ProjectEndpoints.FindByID(endpointID).then(function (project) {
+                        if (!$.isEmptyObject(project)) {
+                            self.id(project._id);
+                            self.projectID(project.projectID);
+                            self.url(project.url);
+                            self.method(project.method);
+                            self.reqHeaders(JSON.stringify(project.reqHeaders));
+                            self.reqData(JSON.stringify(project.reqData));
+                            self.respHeaders(JSON.stringify(project.respHeaders));
+                            self.respData(JSON.stringify(project.respData));
+                            self.isLocked(project.isLocked);
+
+                            self.deleteVisible(true);
+                            self.submitText("Update");
+                        }
+                    });
+                }
+                else
+                {
+                    $("#endpointsView").hide();
+                    $("#selectEndpoint").show();
+                }
+            }
+            self.addNew = function () {
+                $("#endpointsView").show();
+                $("#selectEndpoint").hide();
+
+                self.id("");
+                self.projectID(App.Variables.ActiveProjectID);
+                self.url("");
+                self.method("");
+                self.reqHeaders("");
+                self.reqData("");
+                self.respHeaders("");
+                self.respData("");
+                self.isLocked(false);
+
+                self.deleteVisible(false);
+                self.submitText("Create");
+            }
+            self.JsonEditorAcceptClick = function () {
+                switch(selectedEditorID)
+                {
+                    case "reqHeaders": self.reqHeaders(JSON.stringify(self.GetJsonEditorData())); break;
+                    case "reqData": self.reqData(JSON.stringify(self.GetJsonEditorData())); break;
+                    case "respHeaders": self.respHeaders(JSON.stringify(self.GetJsonEditorData())); break;
+                    case "respData": self.respData(JSON.stringify(self.GetJsonEditorData())); break;
+                }
+                $("#editorModal").modal("hide");
+            }
+            self.EditJsonClick = function (data, event)
+            {
+                selectedEditorID = $(event.delegateTarget).attr("data-input-id");
+
+                var editorValue = $("#" + selectedEditorID).val();
+                editorValue = (editorValue == "") ? "{}" : editorValue;
+                self.SetJsonEditorData(JSON.parse(editorValue));
+                $("#editorModal").modal("show");
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        App.Variables.activePageViewModel = new EndpointsViewModel();
+        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("endpointsView"));
+    });
+</script>
+
+<div id="endpointsView" style="display:none">
+    <form data-bind="submit: FormSubmit">
+        <div class="form-group">
+            <label>Url</label>
+            <input type="text" data-bind="value: url" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Method</label>
+            <input type="text" data-bind="value: method" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Request Headers</label>
+            <div class="input-group">
+                <input id="reqHeaders" type="text" data-bind="value: reqHeaders" class="form-control jsonInput" required>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-input-id="reqHeaders" data-bind="click: EditJsonClick">
+                        <span class="fa fa-pencil-square-o"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Request Data</label>
+            <div class="input-group">
+                <input id="reqData" type="text" data-bind="value: reqData" class="form-control jsonInput">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-input-id="reqData" data-bind="click: EditJsonClick">
+                        <span class="fa fa-pencil-square-o"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Response Headers</label>
+            <div class="input-group">
+                <input id="respHeaders" type="text" data-bind="value: respHeaders" class="form-control jsonInput" required>
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-input-id="respHeaders" data-bind="click: EditJsonClick">
+                        <span class="fa fa-pencil-square-o"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Response Data</label>
+            <div class="input-group">
+                <input id="respData" type="text" data-bind="value: respData" class="form-control jsonInput">
+                <span class="input-group-btn">
+                    <button type="button" class="btn btn-default" data-input-id="respData" data-bind="click: EditJsonClick">
+                        <span class="fa fa-pencil-square-o"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: isLocked"> Endpoint locked (Prevent recording from overwriting data)
+            </label>
+        </div>
+        <button type="button" class="btn btn-default" data-bind="click:cancelClick">Cancel</button>
+        <button type="button" class="btn btn-warning" data-bind="click:deleteClick, visible: deleteVisible">Delete</button>
+        <button type="submit" class="btn btn-primary" data-bind="text:submitText">Update</button>
+    </form>
+    <div class="modal fade" id="editorModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Edit Json</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="jsoneditor" style="width: 100%; height: 500px;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-bind="click:JsonEditorAcceptClick">Accept changes</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<div id="selectEndpoint">
+    <p>
+        Select an endpoint to view or add a new endpoint
+    </p>
+</div>

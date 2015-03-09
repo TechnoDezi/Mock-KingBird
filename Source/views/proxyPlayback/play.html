@@ -1,0 +1,75 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function ProxyPlayViewModel() {
+            var self = this;
+            var projectObj = {};
+
+            //Properties
+            self.projectName = ko.observable();
+            self.ProxyPort = ko.observable();
+            self.outputText = ko.observable("");
+
+            //Functions
+            self.init = function () {
+                if (App.Variables.ActiveProjectID != "") {
+                    App.Projects.FindByID(App.Variables.ActiveProjectID).then(function (project) {
+                        if (!$.isEmptyObject(project)) {
+                            projectObj = project;
+
+                            self.projectName(project.projectName);
+                            self.ProxyPort(project.proxyPort);
+
+                            //Start Proxy
+                            self.StartProxy();
+                        }
+                    });
+                }
+            }
+            self.StartProxy = function()
+            {
+                try {
+                    //Start proxy server
+                    App.ProxyHandler.StartProxyServer(self.ProxyPort(), projectObj, false, true, function (logText) {
+                        self.setOutputText(logText);
+                    });
+                }
+                catch (ex) {
+                    console.log(ex);
+                    bootbox.alert("An error occurred: " + ex.message, function () { });
+                }
+            }
+            self.setOutputText = function (logText) {
+                self.outputText(logText);
+                bottom = $("#outputText")[0].scrollHeight - $("#outputText").height()
+                $("#outputText").scrollTop(bottom);
+            }
+
+            //Events
+            self.closeServer = function () {
+                App.ProxyHandler.StopProxyServer(function (logText) {
+                    self.setOutputText(logText);
+                });
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        App.Variables.activePageViewModel = new ProxyPlayViewModel();
+        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("ProxyPlayView"));
+    });
+</script>
+
+<div id="ProxyPlayView">
+    <div class="row">
+        <div class="col-md-12">
+            <strong>Running proxy playback for project <span data-bind="text:projectName"></span></strong>
+        </div>
+    </div>
+    <br />
+    <div class="row">
+        <div class="col-md-12">
+            <textarea id="outputText" rows="25" class="form-control" data-bind="value:outputText"></textarea>
+        </div>
+    </div>
+</div>

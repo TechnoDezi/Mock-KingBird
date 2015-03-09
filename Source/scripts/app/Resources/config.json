@@ -1,0 +1,67 @@
+﻿{
+    "Views": [
+        {
+            "title": "Login",
+            "key": "account_login",
+            "location": "views/account/login.html",
+            "menu": "views/home/index_menu.html",
+            "breadcrumbs": [ "home", "account_login" ]
+        },
+        {
+            "title": "Register",
+            "key": "account_register",
+            "location": "views/account/register.html",
+            "menu": "views/home/index_menu.html",
+            "breadcrumbs": [ "home", "account_register" ]
+        },
+        {
+            "title": "Welcome",
+            "key": "home",
+            "location": "views/home/index.html",
+            "menu": "views/home/index_menu.html",
+            "breadcrumbs": [ "home" ]
+        },
+        {
+            "title": "Projects List",
+            "key": "project_list",
+            "location": "views/projects/list.html",
+            "menu": "views/home/index_menu.html",
+            "breadcrumbs": [ "home", "project_list" ]
+        },
+        {
+            "title": "New Project",
+            "key": "project_new",
+            "location": "views/projects/new.html",
+            "menu": "views/home/index_menu.html",
+            "breadcrumbs": [ "home", "project_new" ]
+        },
+        {
+            "title": "Project Details",
+            "key": "project_details",
+            "location": "views/projects/details.html",
+            "menu": "views/projects/details_menu.html",
+            "breadcrumbs": [ "home", "project_list", "project_details" ]
+        },
+        {
+            "title": "Proxy Recording",
+            "key": "project_record",
+            "location": "views/proxy/rec.html",
+            "menu": "views/proxy/rec_menu.html",
+            "breadcrumbs": [ "home", "project_list", "project_details", "project_record" ]
+        },
+        {
+            "title": "Endpoints",
+            "key": "project_endpoints",
+            "location": "views/endpoints/details.html",
+            "menu": "views/endpoints/details_menu.html",
+            "breadcrumbs": [ "home", "project_list", "project_details", "project_endpoints" ]
+        },
+        {
+            "title": "Proxy Playback",
+            "key": "project_play",
+            "location": "views/proxyPlayback/play.html",
+            "menu": "views/proxyPlayback/play_menu.html",
+            "breadcrumbs": [ "home", "project_list", "project_details", "project_play" ]
+        }
+    ]
+}

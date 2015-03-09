@@ -1,0 +1,94 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function NewProjectViewModel() {
+            var self = this;
+
+            //Properties
+            self.createdDate = ko.observable(new Date());
+            self.projectName = ko.observable();
+            self.TargetUrl = ko.observable();
+            self.ProxyPort = ko.observable();
+            self.DualModeProxy = ko.observable(false);
+
+            //Functions
+            self.init = function () {
+                if (App.Variables.ActiveProjectID != "") {
+                    App.Projects.FindByID(App.Variables.ActiveProjectID).then(function (project) {
+                        if (!$.isEmptyObject(project)) {
+                            self.projectName(project.projectName);
+                            self.TargetUrl(project.targetUrl);
+                            self.ProxyPort(project.proxyPort);
+                            self.createdDate(project.dateAdded);
+                            self.DualModeProxy(project.dualModeProxy);
+                        }
+                    });
+                }
+            }
+
+            //Events
+            self.FormSubmit = function () {
+                App.Projects.InsertUpdate(
+                    App.Variables.ActiveProjectID,
+                    self.projectName(),
+                    self.TargetUrl(),
+                    self.ProxyPort(),
+                    self.DualModeProxy()
+                ).then(function (id) {
+                    if (id != "" && id != null) {
+                        App.PageManager.LoadPage("project_details");
+                    }
+                });
+            }
+            self.cancelClick = function (data, event) {
+                App.PageManager.NavigateBack();
+            }
+            self.deleteClick = function (data, event) {
+                bootbox.confirm("Are you sure you want to delete the project " + self.projectName() + " ?", function (result) {
+                    if (result) {
+                        App.Projects.Delete(App.Variables.ActiveProjectID).then(function (complete) {
+                            if (complete) {
+                                App.Variables.ActiveProjectID = "";
+                                App.PageManager.LoadPage("home");
+                            }
+                        });
+                    }
+                });
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        App.Variables.activePageViewModel = new NewProjectViewModel();
+        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("projDetailsForm"));
+    });
+</script>
+
+<div id="projDetailsForm">
+    <form data-bind="submit: FormSubmit">
+        <div class="form-group">
+            <label>Created date</label>
+            <span data-bind="dateFromNow: createdDate" class="form-control-static"></span>
+        </div>
+        <div class="form-group">
+            <label>Project name</label>
+            <input type="text" data-bind="value: projectName" class="form-control" placeholder="Enter project name" required>
+        </div>
+        <div class="form-group">
+            <label>Target Url to Proxy</label>
+            <input type="text" data-bind="value: TargetUrl" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Port to start proxy on</label>
+            <input type="text" data-bind="value:ProxyPort" class="form-control" required>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: DualModeProxy"> Dual Mode Proxy (Playback recorded - Proxy record new)
+            </label>
+        </div>
+        <button type="button" class="btn btn-default" data-bind="click:cancelClick">Cancel</button>
+        <button type="button" class="btn btn-warning" data-bind="click:deleteClick">Delete</button>
+        <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>

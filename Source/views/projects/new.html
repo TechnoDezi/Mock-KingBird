@@ -1,0 +1,67 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function NewProjectViewModel() {
+            var self = this;
+
+            //Properties
+            self.projectName = ko.observable();
+            self.TargetUrl = ko.observable();
+            self.ProxyPort = ko.observable();
+            self.DualModeProxy = ko.observable(false);
+
+            //Functions
+            self.init = function () {
+
+            }
+
+            //Events
+            self.FormSubmit = function () {
+                App.Projects.InsertUpdate(
+                "",
+                self.projectName(),
+                self.TargetUrl(),
+                self.ProxyPort(),
+                self.DualModeProxy()
+            ).then(function (id) {
+                if (id != "" && id != null) {
+                    App.Variables.ActiveProjectID = id;
+                    App.PageManager.LoadPage("project_details");
+                }
+            });
+            }
+            self.cancelClick = function (data, event) {
+                App.PageManager.NavigateBack();
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        App.Variables.activePageViewModel = new NewProjectViewModel();
+        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("newProjectForm"));
+    });
+</script>
+
+<div id="newProjectForm">
+    <form data-bind="submit:FormSubmit">
+        <div class="form-group">
+            <label>Project name</label>
+            <input type="text" class="form-control" data-bind="value:projectName" placeholder="Enter project name" required>
+        </div>
+        <div class="form-group">
+            <label>Target Url to Proxy</label>
+            <input type="text" data-bind="value: TargetUrl" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label>Port to start proxy on</label>
+            <input type="text" class="form-control" data-bind="value:ProxyPort" required>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked: DualModeProxy"> Dual Mode Proxy (Playback recorded - Proxy record new)
+            </label>
+        </div>
+        <button type="button" class="btn btn-default" data-bind="click: cancelClick">Cancel</button>
+        <button type="submit" class="btn btn-primary">Create</button>
+    </form>
+</div>

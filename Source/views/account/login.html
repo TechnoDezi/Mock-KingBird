@@ -1,0 +1,63 @@
+﻿<h3>Login</h3>
+<script type="text/javascript">
+    $(function () {
+        function LoginViewModel() {
+            var self = this;
+
+            //Properties
+            self.emailAddress = ko.observable();
+            self.password = ko.observable();
+            self.rememberMe = ko.observable();
+
+            //Functions
+            self.init = function () {
+                
+            }
+
+            //Events
+            self.FormSubmit = function () {
+                var password = App.Crypto.HmacSHA256(self.password(), App.Constants.HashingKey).toString(App.Crypto.enc.Base64);
+
+                App.Authentication.VerifyLogin(self.emailAddress(), password, self.rememberMe()).then(function () {
+                    if (App.Variables.IsAuthorized) {
+                        App.Variables.shellViewModel.RegisterVisible(false);
+                        App.Variables.shellViewModel.LoginVisible(false);
+                        App.Variables.shellViewModel.LogoutVisible(true);
+                        App.PageManager.LoadPage("home");
+                    }
+                    else {
+                        bootbox.alert("The username and password supplied is incorrect", function () { });
+                        self.password("");
+                    }
+                });
+            }
+            self.cancelClick = function (data, event) {
+                App.PageManager.NavigateBack();
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        ko.applyBindings(new LoginViewModel(), document.getElementById("loginForm"));
+    });
+</script>
+<div id="loginForm">
+    <form data-bind="submit: FormSubmit">
+        <div class="form-group">
+            <label>Email address</label>
+            <input type="email" data-bind="value:emailAddress" class="form-control" placeholder="Enter email" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" data-bind="value:password" class="form-control" placeholder="Password" required>
+        </div>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" data-bind="checked:rememberMe"> Remember me
+            </label>
+        </div>
+        <button type="button" class="btn btn-default" data-bind="click:cancelClick">Cancel</button>
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>

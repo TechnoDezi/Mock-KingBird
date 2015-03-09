@@ -1,0 +1,49 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function PlayMenuViewModel() {
+            var self = this;
+
+            //Properties
+            
+
+            //Functions
+            self.init = function () {
+                
+            }
+
+            //Events
+            self.HomeClick = function (project, event) {
+                App.Variables.activePageViewModel.closeServer();
+                App.NavigateHome();
+            }
+            self.BackClick = function (project, event) {
+                App.Variables.activePageViewModel.closeServer();
+                App.PageManager.LoadPage('project_details')
+            }
+            self.StopProxyClick = function (project, event) {
+                App.Variables.activePageViewModel.closeServer();
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        ko.applyBindings(new PlayMenuViewModel(), document.getElementById("ProxyPlayMenu"));
+    });
+</script>
+<div id="ProxyPlayMenu">
+    <ul class="nav sidebar-nav nav-pills nav-stacked">
+        <li>
+            <a href="#" data-bind="click:HomeClick"><span class="fa fa-home fa-fw"></span> Home</a>
+        </li>
+        <li>
+            <a href="#" data-bind="click:BackClick"><span class="fa fa-undo fa-fw"></span> Back to Project</a>
+        </li>
+        <li class="subHeading">
+            Proxy Options
+        </li>
+        <li>
+            <a href="#" data-bind="click:StopProxyClick"><span class="fa fa-stop fa-fw"></span> Stop Proxy Playback</a>
+        </li>
+    </ul>
+</div>

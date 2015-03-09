@@ -1,0 +1,72 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function EndpointsMenuViewModel() {
+            var self = this;
+
+            //Properties
+            self.projectEndpoints = ko.observableArray([]);
+
+            //Functions
+            self.init = function () {
+                App.ProjectEndpoints.FindAll(App.Variables.ActiveProjectID).then(function (projects) {
+                    if (projects.length > 0) {
+                        $(projects).each(function (index, project) {
+                            var shortName = "";
+                            var pos = project.url.lastIndexOf("/");
+                            var startText = project.url.substring(0, pos);
+                            shortName = project.url.replace(startText, "");
+
+                            self.projectEndpoints.push({
+                                _id: project._id,
+                                shortName: shortName,
+                                url: project.url
+                            });
+                        });
+                    }
+                });
+            }
+
+            //Events
+            self.HomeClick = function (project, event) {
+                App.NavigateHome();
+            }
+            self.BackClick = function (project, event) {
+                App.PageManager.LoadPage('project_details');
+            }
+            self.EndpointClick = function (project, event) {
+                App.Variables.activePageViewModel.LoadEndpoint(project._id);
+            }
+            self.NewClick = function (project, event) {
+                App.Variables.activePageViewModel.addNew();
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        ko.applyBindings(new EndpointsMenuViewModel(), document.getElementById("endpointsMenu"));
+    });
+</script>
+<div id="endpointsMenu">
+    <ul class="nav sidebar-nav nav-pills nav-stacked">
+        <li>
+            <a href="#" data-bind="click:HomeClick"><span class="fa fa-home fa-fw"></span> Home</a>
+        </li>
+        <li>
+            <a href="#" data-bind="click:BackClick"><span class="fa fa-undo fa-fw"></span> Back to Project</a>
+        </li>
+        <li>
+            <a href="#" data-bind="click:NewClick"><span class="fa fa-star fa-fw"></span> Add New Endpoint</a>
+        </li>
+        <li class="subHeading">
+            Select Endpoint
+        </li>
+        <li class="submenuItems">
+            <ul id="projectEndpoints" data-bind="foreach: projectEndpoints">
+                <li data-bind="attr:{ title: url}">
+                    <a href="#" data-bind="click: $parent.EndpointClick"><span class="fa fa-circle fa-fw"></span><span data-bind="text: shortName"></span></a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

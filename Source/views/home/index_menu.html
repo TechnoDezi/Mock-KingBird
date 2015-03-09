@@ -1,0 +1,60 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function MenuViewModel() {
+            var self = this;
+
+            //Properties
+            self.recentProjects = ko.observableArray([]);
+
+            //Functions
+            self.init = function () {
+                App.Projects.FindRecent().then(function (projects) {
+                    if (projects.length > 0) {
+                        $(projects).each(function (index, project) {
+                            self.recentProjects.push(project);
+                        });
+                    }
+                });
+            }
+
+            //Events
+            self.RecentProjClick = function (project, event) {
+                App.Variables.ActiveProjectID = project._id;
+                App.PageManager.LoadPage("project_details");
+            }
+            self.NewProjectClick = function (data, event) {
+                App.Variables.ActiveProjectID = "";
+                App.PageManager.LoadPage('project_new');
+            }
+            self.AllProjectsClick = function (data, event) {
+                App.Variables.ActiveProjectID = "";
+                App.PageManager.LoadPage('project_list');
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        ko.applyBindings(new MenuViewModel(), document.getElementById("mainIndexMenu"));
+    });
+</script>
+<div id="mainIndexMenu">
+    <ul class="nav sidebar-nav nav-pills nav-stacked">
+        <li>
+            <a href="#" data-bind="click: NewProjectClick"><span class="fa fa-asterisk fa-fw"></span> New Project</a>
+        </li>
+        <li>
+            <a href="#" data-bind="click: AllProjectsClick"><span class="fa fa-list-alt fa-fw"></span> All Projects</a>
+        </li>
+        <li class="subHeading">
+            Recent Projects
+        </li>
+        <li class="submenuItems">
+            <ul id="recentProjects" data-bind="foreach: recentProjects">
+                <li>
+                    <a href="#" data-bind="click: $parent.RecentProjClick"><span class="fa fa-circle fa-fw"></span><span data-bind="text: projectName"></span></a>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

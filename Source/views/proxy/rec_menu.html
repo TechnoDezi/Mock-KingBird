@@ -1,0 +1,50 @@
+﻿<script type="text/javascript">
+    $(function () {
+        function RecMenuViewModel() {
+            var self = this;
+
+            //Properties
+            
+
+            //Functions
+            self.init = function () {
+                
+            }
+
+            //Events
+            self.HomeClick = function (project, event) {
+                App.Variables.activePageViewModel.closeServer();
+                App.NavigateHome();
+            }
+            self.BackClick = function (project, event) {
+                App.Variables.activePageViewModel.closeServer();
+                App.PageManager.LoadPage('project_details')
+            }
+            self.StopProxyClick = function (project, event) {
+                App.Variables.activePageViewModel.closeServer();
+                //App.PageManager.LoadPage('project_details')
+            }
+
+            //Load View Model
+            self.init();
+        }
+
+        ko.applyBindings(new RecMenuViewModel(), document.getElementById("ProxyRecMenu"));
+    });
+</script>
+<div id="ProxyRecMenu">
+    <ul class="nav sidebar-nav nav-pills nav-stacked">
+        <li>
+            <a href="#" data-bind="click:HomeClick"><span class="fa fa-home fa-fw"></span> Home</a>
+        </li>
+        <li>
+            <a href="#" data-bind="click:BackClick"><span class="fa fa-undo fa-fw"></span> Back to Project</a>
+        </li>
+        <li class="subHeading">
+            Proxy Options
+        </li>
+        <li>
+            <a href="#" data-bind="click:StopProxyClick"><span class="fa fa-stop fa-fw"></span> Stop Proxy Recording</a>
+        </li>
+    </ul>
+</div>
