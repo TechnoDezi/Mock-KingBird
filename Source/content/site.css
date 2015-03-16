@@ -86,6 +86,13 @@ h1,h2,h3{
             font-size: 14px;
             padding: 4px 15px;
         }
+
+.selected {
+    background-color: darkgreen;
+}
+    .selected a {
+        color: white!important;
+    }
 .cursor-pointer{
     cursor:pointer;
 }

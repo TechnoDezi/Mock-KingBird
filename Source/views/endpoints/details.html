@@ -22,6 +22,8 @@
             self.deleteVisible = ko.observable(true);
             self.submitText = ko.observable("Update");
 
+            self.projectEndpoints = ko.observableArray([]);
+
             //Functions
             self.init = function () {
                 self.AttachEventHandlers();
@@ -229,99 +231,149 @@
                 self.SetJsonEditorData(JSON.parse(editorValue));
                 $("#editorModal").modal("show");
             }
+            self.DeleteMClick = function(endpoints)
+            {
+                self.projectEndpoints(endpoints);
+                $("#deleteMultipleModal").modal("show");
+            }
+            self.DeleteMultipleOKClick = function () {
+                bootbox.confirm("Are you sure you want to delete the selected endpoints?", function (result) {
+                    if (result) {
+                        $(self.projectEndpoints()).each(function (index, endpoint) {
+                            if (endpoint.isDeleteChecked()) {
+                                App.ProjectEndpoints.Delete(endpoint._id);
+                            }
+                        });
+
+                        App.PageManager.LoadPage('project_endpoints');
+                    }
+                });
+            }
 
             //Load View Model
             self.init();
         }
 
         App.Variables.activePageViewModel = new EndpointsViewModel();
-        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("endpointsView"));
+        ko.applyBindings(App.Variables.activePageViewModel, document.getElementById("endpointsDetails"));
     });
 </script>
 
-<div id="endpointsView" style="display:none">
-    <form data-bind="submit: FormSubmit">
-        <div class="form-group">
-            <label>Url</label>
-            <input type="text" data-bind="value: url" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>Method</label>
-            <input type="text" data-bind="value: method" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label>Request Headers</label>
-            <div class="input-group">
-                <input id="reqHeaders" type="text" data-bind="value: reqHeaders" class="form-control jsonInput" required>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-input-id="reqHeaders" data-bind="click: EditJsonClick">
-                        <span class="fa fa-pencil-square-o"></span>
-                    </button>
-                </span>
+<div id="endpointsDetails">
+    <div id="endpointsView" style="display:none">
+        <form data-bind="submit: FormSubmit">
+            <div class="form-group">
+                <label>Url</label>
+                <input type="text" data-bind="value: url" class="form-control" required>
             </div>
-        </div>
-        <div class="form-group">
-            <label>Request Data</label>
-            <div class="input-group">
-                <input id="reqData" type="text" data-bind="value: reqData" class="form-control jsonInput">
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-input-id="reqData" data-bind="click: EditJsonClick">
-                        <span class="fa fa-pencil-square-o"></span>
-                    </button>
-                </span>
+            <div class="form-group">
+                <label>Method</label>
+                <input type="text" data-bind="value: method" class="form-control" required>
             </div>
-        </div>
-        <div class="form-group">
-            <label>Response Headers</label>
-            <div class="input-group">
-                <input id="respHeaders" type="text" data-bind="value: respHeaders" class="form-control jsonInput" required>
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-input-id="respHeaders" data-bind="click: EditJsonClick">
-                        <span class="fa fa-pencil-square-o"></span>
-                    </button>
-                </span>
+            <div class="form-group">
+                <label>Request Headers</label>
+                <div class="input-group">
+                    <input id="reqHeaders" type="text" data-bind="value: reqHeaders" class="form-control jsonInput" required>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-input-id="reqHeaders" data-bind="click: EditJsonClick">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </button>
+                    </span>
+                </div>
             </div>
-        </div>
-        <div class="form-group">
-            <label>Response Data</label>
-            <div class="input-group">
-                <input id="respData" type="text" data-bind="value: respData" class="form-control jsonInput">
-                <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" data-input-id="respData" data-bind="click: EditJsonClick">
-                        <span class="fa fa-pencil-square-o"></span>
-                    </button>
-                </span>
+            <div class="form-group">
+                <label>Request Data</label>
+                <div class="input-group">
+                    <input id="reqData" type="text" data-bind="value: reqData" class="form-control jsonInput">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-input-id="reqData" data-bind="click: EditJsonClick">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </button>
+                    </span>
+                </div>
             </div>
-        </div>
-        <div class="checkbox">
-            <label>
-                <input type="checkbox" data-bind="checked: isLocked"> Endpoint locked (Prevent recording from overwriting data)
-            </label>
-        </div>
-        <button type="button" class="btn btn-default" data-bind="click:cancelClick">Cancel</button>
-        <button type="button" class="btn btn-warning" data-bind="click:deleteClick, visible: deleteVisible">Delete</button>
-        <button type="submit" class="btn btn-primary" data-bind="text:submitText">Update</button>
-    </form>
-    <div class="modal fade" id="editorModal">
+            <div class="form-group">
+                <label>Response Headers</label>
+                <div class="input-group">
+                    <input id="respHeaders" type="text" data-bind="value: respHeaders" class="form-control jsonInput" required>
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-input-id="respHeaders" data-bind="click: EditJsonClick">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Response Data</label>
+                <div class="input-group">
+                    <input id="respData" type="text" data-bind="value: respData" class="form-control jsonInput">
+                    <span class="input-group-btn">
+                        <button type="button" class="btn btn-default" data-input-id="respData" data-bind="click: EditJsonClick">
+                            <span class="fa fa-pencil-square-o"></span>
+                        </button>
+                    </span>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" data-bind="checked: isLocked"> Endpoint locked (Prevent recording from overwriting data)
+                </label>
+            </div>
+            <button type="button" class="btn btn-default" data-bind="click:cancelClick">Cancel</button>
+            <button type="button" class="btn btn-warning" data-bind="click:deleteClick, visible: deleteVisible">Delete</button>
+            <button type="submit" class="btn btn-primary" data-bind="text:submitText">Update</button>
+        </form>
+        <div class="modal fade" id="editorModal">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Edit Json</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div id="jsoneditor" style="width: 100%; height: 500px;"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" data-bind="click:JsonEditorAcceptClick">Accept changes</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+    </div>
+    <div id="selectEndpoint">
+        <p>
+            Select an endpoint to view or add a new endpoint
+        </p>
+    </div>
+    <div class="modal fade" id="deleteMultipleModal">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title">Edit Json</h4>
+                    <h4 class="modal-title">Delete Multiple Endpoints</h4>
                 </div>
                 <div class="modal-body">
-                    <div id="jsoneditor" style="width: 100%; height: 500px;"></div>
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>url</th>
+                            </tr>
+                        </thead>
+                        <tbody data-bind="foreach: projectEndpoints">
+                            <tr>
+                                <td class="text-center"><input type="checkbox" data-bind="checked: isDeleteChecked" /></td>
+                                <td data-bind="text:url"></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" data-bind="click:JsonEditorAcceptClick">Accept changes</button>
+                    <button type="button" class="btn btn-primary" data-bind="click:DeleteMultipleOKClick">Delete Selected</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
-</div>
-<div id="selectEndpoint">
-    <p>
-        Select an endpoint to view or add a new endpoint
-    </p>
 </div>

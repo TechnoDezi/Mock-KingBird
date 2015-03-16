@@ -4,7 +4,6 @@
             var self = this;
 
             //Properties
-            
 
             //Functions
             self.init = function () {
@@ -24,6 +23,9 @@
             self.StartProxyPlayClick = function (project, event) {
                 App.PageManager.LoadPage('project_play')
             }
+            self.CloneClick = function (project, event) {
+                App.Variables.activePageViewModel.CloneProjectClick();
+            }
 
             //Load View Model
             self.init();
@@ -36,6 +38,9 @@
 <ul class="nav sidebar-nav nav-pills nav-stacked">
     <li>
         <a href="#" data-bind="click:HomeClick"><span class="fa fa-home fa-fw"></span> Home</a>
+    </li>
+    <li>
+        <a href="#" data-bind="click:CloneClick"><span class="fa fa-files-o fa-fw"></span> Clone Project</a>
     </li>
     <li class="subHeading">
         Project Options

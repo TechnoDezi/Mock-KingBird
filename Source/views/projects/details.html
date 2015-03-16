@@ -9,6 +9,7 @@
             self.TargetUrl = ko.observable();
             self.ProxyPort = ko.observable();
             self.DualModeProxy = ko.observable(false);
+            self.newProjectName = ko.observable();
 
             //Functions
             self.init = function () {
@@ -39,20 +40,64 @@
                     }
                 });
             }
+            self.CloneFormSubmit = function () {
+                App.Projects.InsertUpdate(
+                    "",
+                    self.newProjectName(),
+                    self.TargetUrl(),
+                    self.ProxyPort(),
+                    self.DualModeProxy()
+                ).then(function (id) {
+                    if (id != "" && id != null) {
+                        //Clone Endpoints
+                        App.ProjectEndpoints.FindAll(App.Variables.ActiveProjectID).then(function (endpoints) {
+                            $(endpoints).each(function (index, endpoint) {
+                                App.ProjectEndpoints.InsertUpdate(
+                                    "",
+                                    id,
+                                    endpoint.url,
+                                    endpoint.method,
+                                    endpoint.reqHeaders,
+                                    endpoint.reqData,
+                                    endpoint.respHeaders,
+                                    endpoint.respData,
+                                    endpoint.isLocked
+                                );
+                            });
+                        });
+
+                        $("#cloneProjectModal").modal("hide");
+                        App.Variables.ActiveProjectID = id;
+                        App.PageManager.LoadPage("project_details");
+                    }
+                });
+            }
             self.cancelClick = function (data, event) {
                 App.PageManager.NavigateBack();
             }
             self.deleteClick = function (data, event) {
                 bootbox.confirm("Are you sure you want to delete the project " + self.projectName() + " ?", function (result) {
                     if (result) {
+                        //Delete Endpoints
+                        App.ProjectEndpoints.FindAll(App.Variables.ActiveProjectID).then(function (endpoints) {
+                            $(endpoints).each(function (index, endpoint) {
+                                App.ProjectEndpoints.Delete(endpoint._id);
+                            });
+                        });
+
+                        //Delete Project
                         App.Projects.Delete(App.Variables.ActiveProjectID).then(function (complete) {
                             if (complete) {
                                 App.Variables.ActiveProjectID = "";
-                                App.PageManager.LoadPage("home");
+                                App.PageManager.LoadPage("project_list");
                             }
                         });
                     }
                 });
+            }
+            self.CloneProjectClick = function () {
+                self.newProjectName("");
+                $("#cloneProjectModal").modal("show");
             }
 
             //Load View Model
@@ -91,4 +136,30 @@
         <button type="button" class="btn btn-warning" data-bind="click:deleteClick">Delete</button>
         <button type="submit" class="btn btn-primary">Update</button>
     </form>
+    <div class="modal fade" id="cloneProjectModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form data-bind="submit: CloneFormSubmit">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Clone Project</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Clone From Project</label>
+                            <span data-bind="text: projectName" class="form-control-static"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Clone to Project</label>
+                            <input type="text" data-bind="value: newProjectName" class="form-control" placeholder="Enter project name" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Clone</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
 </div>

@@ -22,7 +22,7 @@
         "exe_icon": "Icon.png", 
         "visible": true, 
         "as_desktop": false, 
-        "toolbar": false, 
+        "toolbar": true, 
         "position": "center", 
         "show_in_taskbar": true, 
         "mac_icon": "", 
