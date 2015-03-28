@@ -49,7 +49,8 @@ h1,h2,h3{
 {       
     float:right;
     line-height: 22px;
-    padding: 8px 0 0 0;
+    padding: 14px 0 0 0;
+    color:white;
 }
     .login-right ul {
         list-style:none;

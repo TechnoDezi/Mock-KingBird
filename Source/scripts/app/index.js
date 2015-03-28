@@ -8,6 +8,7 @@
     self.LogoutVisible = ko.observable(false);
     self.AppName = ko.observable(App.gui.App.manifest.name);
     self.AppVersion = ko.observable(App.gui.App.manifest.version);
+    self.projectName = ko.observable("");
 
     //Functions
     self.init = function () {
@@ -35,6 +36,19 @@
 
                 self.breadcrumbs.push({ title: title, key: key });
             });
+        }
+
+        //Load Active Project
+        if (App.Variables.ActiveProjectID != "") {
+            App.Projects.FindByID(App.Variables.ActiveProjectID).then(function (project) {
+                if (!$.isEmptyObject(project)) {
+                    self.projectName(project.projectName);
+                }
+            });
+        }
+        else
+        {
+            self.projectName("");
         }
     }
 
