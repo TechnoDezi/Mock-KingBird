@@ -40,8 +40,11 @@
             }
             self.setOutputText = function (logText) {
                 self.outputText(logText);
-                bottom = $("#outputText")[0].scrollHeight - $("#outputText").height()
-                $("#outputText").scrollTop(bottom);
+
+                if ($("#outputText").lenght > 0 && $("#outputText")[0].scrollHeight != undefined) {
+                    var bottom = $("#outputText")[0].scrollHeight - $("#outputText").height();
+                    $("#outputText").scrollTop(bottom);
+                }
             }
 
             //Events

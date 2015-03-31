@@ -142,7 +142,6 @@ AppPackages/
 
 # Node modules
 node_modules/
-Batch_Files/
 Solution_Files/
 
 # Others

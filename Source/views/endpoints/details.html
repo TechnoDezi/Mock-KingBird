@@ -150,21 +150,85 @@
                 });
             }
             self.FormSubmit = function () {
-                App.ProjectEndpoints.InsertUpdate(
-                    self.id(),
-                    self.projectID(),
-                    self.url(),
-                    self.method(),
-                    JSON.parse(self.reqHeaders()),
-                    JSON.parse(self.reqData()),
-                    JSON.parse(self.respHeaders()),
-                    JSON.parse(self.respData()),
-                    self.isLocked()
-                ).then(function (id) {
-                    if (id != "" && id != null) {
-                        App.PageManager.LoadPage('project_endpoints');
+                if (self.ValidateFormSubmit()) {
+                    App.ProjectEndpoints.InsertUpdate(
+                        self.id(),
+                        self.projectID(),
+                        self.url(),
+                        self.method(),
+                        JSON.parse(self.reqHeaders()),
+                        JSON.parse(self.reqData()),
+                        JSON.parse(self.respHeaders()),
+                        JSON.parse(self.respData()),
+                        self.isLocked()
+                    ).then(function (id) {
+                        if (id != "" && id != null) {
+                            App.PageManager.LoadPage('project_endpoints');
+                        }
+                    });
+                }
+            }
+            self.ValidateFormSubmit = function()
+            {
+                var isValid = true;
+
+                //Validate reqHeaders
+                try {
+                    if (self.reqHeaders() == "") {
+                        self.reqHeaders("{}");
                     }
-                });
+                    else {
+                        JSON.parse(self.reqHeaders());
+                    }
+                } catch (e) {
+                    bootbox.alert("Request Headers is not valid json", function () { });
+                    isValid = false;
+                    return isValid;
+                }
+
+                //Validate reqData
+                try {
+                    if (self.reqData() == "") {
+                        self.reqData("{}");
+                    }
+                    else {
+                        JSON.parse(self.reqData());
+                    }
+                } catch (e) {
+                    bootbox.alert("Request Data is not valid json", function () { });
+                    isValid = false;
+                    return isValid;
+                }
+
+                //Validate respHeaders
+                try {
+                    if (self.respHeaders() == "") {
+                        self.respHeaders("{}");
+                    }
+                    else {
+                        JSON.parse(self.respHeaders());
+                    }
+                } catch (e) {
+                    bootbox.alert("Response Headers is not valid json", function () { });
+                    isValid = false;
+                    return isValid;
+                }
+
+                //Validate respData
+                try {
+                    if (self.respData() == "") {
+                        self.respData("{}");
+                    }
+                    else {
+                        JSON.parse(self.respData());
+                    }
+                } catch (e) {
+                    bootbox.alert("Response Data is not valid json", function () { });
+                    isValid = false;
+                    return isValid;
+                }
+
+                return isValid;
             }
             self.LoadEndpoint = function(endpointID)
             {
