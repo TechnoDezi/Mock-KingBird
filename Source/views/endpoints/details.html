@@ -22,6 +22,7 @@
             self.deleteVisible = ko.observable(true);
             self.submitText = ko.observable("Update");
             self.SelectDeselectAll = ko.observable(false);
+            self.cloneEndpointUrl = ko.observable();
 
             self.projectEndpoints = ko.observableArray([]);
 
@@ -135,6 +136,23 @@
             }
 
             //Events
+            self.CloneFormSubmit = function () {
+                App.ProjectEndpoints.InsertUpdate(
+                        "",
+                        self.projectID(),
+                        self.cloneEndpointUrl(),
+                        self.method(),
+                        JSON.parse(self.reqHeaders()),
+                        JSON.parse(self.reqData()),
+                        JSON.parse(self.respHeaders()),
+                        JSON.parse(self.respData()),
+                        self.isLocked()
+                    ).then(function (id) {
+                        if (id != "" && id != null) {
+                            App.PageManager.LoadPage('project_endpoints');
+                        }
+                    });
+            }
             self.cancelClick = function (data, event) {
                 self.LoadEndpoint("");
             }
@@ -256,6 +274,7 @@
                 }
                 else
                 {
+                    self.id("");
                     $("#endpointsView").hide();
                     $("#selectEndpoint").show();
                 }
@@ -317,6 +336,11 @@
             self.DeleteMultipleRowClick = function(data, event)
             {
                 data.isDeleteChecked(!data.isDeleteChecked());
+            }
+            self.CloneEndpointClick = function()
+            {
+                self.cloneEndpointUrl("");
+                $("#cloneEndpointModal").modal("show");
             }
 
             //Subscription
@@ -454,6 +478,32 @@
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" data-bind="click:DeleteMultipleOKClick">Delete Selected</button>
                 </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="modal fade" id="cloneEndpointModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form data-bind="submit: CloneFormSubmit">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Clone Endpoint</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label>Clone From Endpoint</label>
+                            <span data-bind="text: url" class="form-control-static"></span>
+                        </div>
+                        <div class="form-group">
+                            <label>Clone to Endpoint</label>
+                            <input type="text" data-bind="value: cloneEndpointUrl" class="form-control" placeholder="Enter endpoint name" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Clone</button>
+                    </div>
+                </form>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->

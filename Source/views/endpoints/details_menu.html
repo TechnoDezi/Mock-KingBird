@@ -5,6 +5,16 @@
 
             //Properties
             self.projectEndpoints = ko.observableArray([]);
+            self.IsCloneVisible = ko.observable(false);
+
+            App.Variables.activePageViewModel.id.subscribe(function (newValue) {
+                if (newValue != null && newValue != "") {
+                    self.IsCloneVisible(true);
+                }
+                else {
+                    self.IsCloneVisible(false);
+                }
+            });
 
             self.EndpointObject = function (id, shortName, url, selectedClass, isDeleteChecked) {
                 this._id = id;
@@ -71,6 +81,9 @@
                 //Show delete dialog
                 App.Variables.activePageViewModel.DeleteMClick(self.projectEndpoints());
             }
+            self.CloneClick = function (project, event) {
+                App.Variables.activePageViewModel.CloneEndpointClick();
+            }
 
             //Load View Model
             self.init();
@@ -92,6 +105,9 @@
         </li>
         <li>
             <a href="#" data-bind="click:DeleteMClick"><span class="fa fa-times fa-fw"></span> Delete Multiple</a>
+        </li>
+        <li data-bind="visible: IsCloneVisible">
+            <a href="#" data-bind="click:CloneClick"><span class="fa fa-files-o fa-fw"></span> Clone Endpoint</a>
         </li>
         <li class="subHeading">
             Select Endpoint

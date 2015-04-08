@@ -57,11 +57,11 @@
                     if (addHistory == undefined || addHistory != null || addHistory == true) {
                         navigationHistory.push(pageName);
                     }
-                });
 
-                //Load and show page menu
-                $.get(menuUrl, null, function (resp) {
-                    $("#" + App.Constants.BaseMenuPlaceholderID).html(resp);
+                    //Load and show page menu
+                    $.get(menuUrl, null, function (resp) {
+                        $("#" + App.Constants.BaseMenuPlaceholderID).html(resp);
+                    });
                 });
             });
         }
