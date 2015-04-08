@@ -22,6 +22,8 @@ Mock-KingBird supports the following functionality at the time of writing:
 
 Endpoint Url's are just that … Url's. With Mock-KingBird there is no worrying about how it executes or where the request is handled - requests are simply matched on the url structure, request method and request data. If a request signature match recorded data, the response is returned to the client.
 
+Create your service connected mobile apps in minutes, demo to your clients using consistent data and build your api backend once your concept is proven.
+
 Because Mock-KingBird is written using Node-Webkit it supports multiple desktop platforms.
 
 ![](https://github.com/TechnoDezi/Mock-KingBird/blob/master/Screenshots/Home.PNG?raw=true)
