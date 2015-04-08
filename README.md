@@ -13,11 +13,12 @@ Mock-KingBird supports the following functionality at the time of writing:
 - Multiple projects 
 - Api proxy and record 
 - Proxy playback of recorded data 
+- Dual mode proxy and playback – Playback recorded data and proxy record new
 - New endpoint creation 
 - JSON editor and Viewer – so that you never have to leave the app
-- Json editor
 - Ability to lock endpoints from being overwritten during recording, esp for manual changes
-- Dual mode proxy and playback – Playback recorded data and proxy record new
+- Clone Projects
+- Delete multiple endpoints
 
 Endpoint Url's are just that … Url's. With Mock-KingBird there is no worrying about how it executes or where the request is handled - requests are simply matched on the url structure, request method and request data. If a request signature match recorded data, the response is returned to the client.
 
