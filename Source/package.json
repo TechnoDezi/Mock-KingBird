@@ -18,22 +18,22 @@
         "title": "Mock-KingBird", 
         "always-on-top": false, 
         "frame": true, 
-        "visible": true, 
         "height": 750, 
         "exe_icon": "Icon.png", 
-        "width": 1000, 
+        "visible": true, 
         "as_desktop": false, 
+        "toolbar": false, 
         "position": "center", 
         "show_in_taskbar": true, 
         "mac_icon": "", 
+        "width": 1000, 
         "transparent": false, 
-        "toolbar": false, 
         "icon": "Icon.png"
     }, 
-    "version": "1.1.8", 
+    "version": "1.1.9", 
     "inject-js-start": "", 
     "main": "index.html", 
-    "chromium-args": "", 
+    "node-main": "", 
     "webexe_settings": {
         "linux-x32": true, 
         "windows-x64": true, 
@@ -49,9 +49,9 @@
     "description": "", 
     "dependencies": {
         "q": "~1.1.2", 
+        "crypto-js": "~3.1.4", 
         "moment": "~2.9.0", 
-        "nedb": "~1.1.1",
-	"crypto-js": "~3.1.4"
+        "nedb": "~1.1.1"
     }, 
     "webkit": {
         "page-cache": false, 
@@ -62,5 +62,5 @@
     "name": "Mock-KingBird", 
     "single-instance": true, 
     "snapshot": "", 
-    "node-main": ""
+    "chromium-args": ""
 }
