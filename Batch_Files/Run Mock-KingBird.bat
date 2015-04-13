@@ -1,1 +1,1 @@
-nwbuild -r "C:\Users\TechnoDezi\Documents\GitHub\Mock-KingBird\Source" -v 0.12.0
+nwbuild -r "..\Source" -v 0.12.0
